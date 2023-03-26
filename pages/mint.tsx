@@ -25,7 +25,6 @@ import { YourNFTContract as LOCAL_CONTRACT_ADDRESS } from '../artifacts/contract
 // Simply copy the array from `abi: []` found in `YourNFT.json`.
 import { YourNFT_ABI } from '../artifacts/contracts/YourNFT.sol/YourNFT.js'
 import { Layout } from '../components/layout/Layout'
-import { NftList } from '../components/NftList'
 import { TICKET_CONTRACT_ADDRESS } from '../constants'
 import { useCheckLocalChain } from '../hooks/useCheckLocalChain'
 import { useIsMounted } from '../hooks/useIsMounted'

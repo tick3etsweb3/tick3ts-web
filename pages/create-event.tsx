@@ -238,9 +238,6 @@ const CreateEvent: NextPage = () => {
           </Button>
         </Text>
         <Divider my="8" borderColor="gray.400" />
-        {/* {nftTokenUris && (
-      <NftList address={address} ipfs={ipfs} nftTokenUris={nftTokenUris} />
-    )} */}
       </Box>
     </Layout>
   )
