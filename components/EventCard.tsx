@@ -19,12 +19,15 @@ import {
 } from 'wagmi'
 import abiEvent from '../constants/abiEvent'
 import abi, { TICKET_CONTRACT_ADDRESS } from '../constants'
+import { utils } from 'ethers'
+import { useRouter } from 'next/router'
 
 type EventProps = {
   address: `0x${string}`
 }
 
 const EventCard: React.FC<EventProps> = ({ address }) => {
+  const route = useRouter()
   const toast = useToast()
   const { data: name } = useContractRead({
     address: address,
@@ -61,6 +64,9 @@ const EventCard: React.FC<EventProps> = ({ address }) => {
     address: address,
     abi: abiEvent,
     functionName: 'safeMint',
+    overrides: {
+      value: price,
+    },
   })
 
   const {
@@ -84,10 +90,10 @@ const EventCard: React.FC<EventProps> = ({ address }) => {
             <Text>Successfully minted your ticket!</Text>
             <Text>
               <Link
-                href={`https://mumbai.polygonscan.com/tx/${data?.blockHash}`}
+                href={`https://mumbai.polygonscan.com/tx/${safeMintTx?.hash}`}
                 isExternal
               >
-                View on Etherscan
+                View on Polyscan
               </Link>
             </Text>
           </>
@@ -96,15 +102,16 @@ const EventCard: React.FC<EventProps> = ({ address }) => {
         duration: 6000,
         isClosable: true,
       })
+      route.push('/my-tickets')
     },
   })
   return (
     <Box
-      p={8}
+      p={4}
       backgroundColor="white"
       borderRadius="md"
       boxShadow="md"
-      width={{ base: '90%', md: '80%', lg: '50%' }}
+      width={{ base: '90%', md: '80%', lg: '80%' }}
       alignItems="center"
       justifyContent="center"
       display={'flex'}
@@ -146,7 +153,11 @@ const EventCard: React.FC<EventProps> = ({ address }) => {
         <Text fontWeight="bold" fontSize="sm" color="gray.500">
           Ticket Price
         </Text>
-        <Text fontSize="sm">{price?.toString() ?? 'Free'}</Text>
+        <Text fontSize="sm">
+          {price
+            ? `${utils.formatUnits(price, 'ether')} matic` ?? 'Free'
+            : null}
+        </Text>
       </Box>
       <Button mt={4} colorScheme="blue" width="50%" onClick={handleMint}>
         {

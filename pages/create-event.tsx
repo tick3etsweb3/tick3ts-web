@@ -77,7 +77,7 @@ const CreateEvent: NextPage = () => {
       eventDesc,
     ],
   })
-  console.log(ticketPrice, typeof ticketPrice)
+
   const {
     writeAsync: createEvent,
     reset: resetCreateEvent,
@@ -105,10 +105,10 @@ const CreateEvent: NextPage = () => {
             <Text>Successfully created your event NFT!</Text>
             <Text>
               <Link
-                href={`https://goerli.etherscan.io/tx/${data?.blockHash}`}
+                href={`https://mumbai.polygonscan.com/tx/${createEventTx?.hash}`}
                 isExternal
               >
-                View on Etherscan
+                View on polyscan
               </Link>
             </Text>
           </>
@@ -117,7 +117,6 @@ const CreateEvent: NextPage = () => {
         duration: 5000,
         isClosable: true,
       })
-      console.log(data)
       route.push('/')
     },
   })
@@ -198,7 +197,7 @@ const CreateEvent: NextPage = () => {
           </NumberInput>
         </FormControl>
         <FormControl id="ticketPrice" mt={4}>
-          <FormLabel>Price for a Ticket in ETH</FormLabel>
+          <FormLabel>Price for a Ticket in Matic</FormLabel>
           <NumberInput
             min={0}
             value={ticketPrice}
@@ -217,7 +216,14 @@ const CreateEvent: NextPage = () => {
             mt={8}
             colorScheme="teal"
             size="lg"
-            // disabled={isLoading}
+            disabled={
+              !eventName ||
+              !eventLocation ||
+              !eventDate ||
+              !eventDesc ||
+              !ticketAmount ||
+              !ticketPrice
+            }
             onClick={handleCreateEvent}
             // isLoading={isLoading}
           >
