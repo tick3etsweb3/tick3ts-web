@@ -27,14 +27,14 @@ export const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
                   Home
                 </Link>
               </NextLink>
-              <NextLink href="/nft" passHref legacyBehavior>
+              <NextLink href="/create-event" passHref legacyBehavior>
                 <Link px="4" py="1">
-                  Mint NFT
+                  Create event
                 </Link>
               </NextLink>
-              <NextLink href="/token-gated" passHref legacyBehavior>
+              <NextLink href="/my-tickets" passHref legacyBehavior>
                 <Link px="4" py="1">
-                  Token Gated
+                  My tickets
                 </Link>
               </NextLink>
             </Flex>
@@ -49,7 +49,9 @@ export const Layout = ({ children, customMeta }: LayoutProps): JSX.Element => {
         </Container>
       </header>
       <main>
-        <Container maxWidth="container.xl">{children}</Container>
+        <Container centerContent={true} maxWidth="container.xl">
+          {children}
+        </Container>
       </main>
     </>
   )

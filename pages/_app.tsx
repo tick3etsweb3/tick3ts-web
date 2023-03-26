@@ -21,7 +21,6 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || ''
-console.log({ ALCHEMY_API_KEY })
 const { chains, provider, webSocketProvider } = configureChains(
   [mainnet, polygon, optimism, arbitrum, goerli, localhost, polygonMumbai],
   [publicProvider()]
@@ -46,7 +45,6 @@ const wagmiClient = createClient({
 
 export default function App({ Component, pageProps }: AppProps) {
   const { address, isConnected } = useAccount()
-  console.log({ address, isConnected })
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider

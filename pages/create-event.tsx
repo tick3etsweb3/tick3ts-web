@@ -15,9 +15,10 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react'
-import { BigNumber } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { create } from 'ipfs-http-client'
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import {
   erc721ABI,
@@ -50,13 +51,14 @@ const CreateEvent: NextPage = () => {
   const { address } = useAccount()
 
   const toast = useToast()
-
+  const route = useRouter()
   const [eventName, setEventName] = useState('')
   const [eventLocation, setEventLocation] = useState('')
   const [eventDate, setEventDate] = useState('')
   const [eventTime, setEventTime] = useState('')
+  const [eventDesc, setEventDesc] = useState('')
   const [ticketAmount, setTicketAmount] = useState('1')
-  const [ticketPrice, setTicketPrice] = useState('1')
+  const [ticketPrice, setTicketPrice] = useState('0')
   const { data: eventCreated, error: fuck } = usePrepareContractWrite({
     address: TICKET_CONTRACT_ADDRESS,
     abi: abi,
@@ -67,17 +69,15 @@ const CreateEvent: NextPage = () => {
       eventDate,
       'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
       BigNumber.from(ticketAmount ? ticketAmount : 1),
-      BigNumber.from(ticketPrice ? ticketPrice : 1),
+      BigNumber.from(
+        ticketPrice.toString()
+          ? utils.parseUnits(ticketPrice.toString(), 'ether')
+          : 0
+      ),
+      eventDesc,
     ],
   })
-  console.log({ address })
-  const { data: events } = useContractRead({
-    address: TICKET_CONTRACT_ADDRESS,
-    abi: abi,
-    functionName: 'events',
-    args: [address as `0x${string}`],
-  })
-
+  console.log(ticketPrice, typeof ticketPrice)
   const {
     writeAsync: createEvent,
     reset: resetCreateEvent,
@@ -89,14 +89,15 @@ const CreateEvent: NextPage = () => {
     setEventName('')
     setEventLocation('')
     setEventDate('')
+    setEventDesc('')
+    setTicketAmount('')
+    setTicketPrice('')
   }
   // Creates the contracts array for `nftTokenIds`
 
-  const { isLoading } = useWaitForTransaction({
+  const { isLoading, error } = useWaitForTransaction({
     hash: createEventTx?.hash,
     onSuccess(data) {
-      console.log('success data', data)
-
       toast({
         title: 'Transaction Successful',
         description: (
@@ -116,18 +117,26 @@ const CreateEvent: NextPage = () => {
         duration: 5000,
         isClosable: true,
       })
+      console.log(data)
+      route.push('/')
     },
   })
-
   return (
     <Layout>
       <Heading as="h1" mb="8">
-        Mint NFT
+        Create event
       </Heading>
-      <Text mt="8" fontSize="xl">
-        This page only works on the GOERLI Testnet or on a Local Chain.
-      </Text>
-      <Box p="8" mt="8" bg="gray.100">
+      <Box
+        p={8}
+        backgroundColor="white"
+        borderRadius="md"
+        boxShadow="md"
+        width={{ base: '90%', md: '80%', lg: '100%' }}
+        alignItems="center"
+        justifyContent="center"
+        display={'flex'}
+        flexDirection={'column'}
+      >
         <Divider my="8" borderColor="gray.400" />
 
         {/* Add inputs for event details */}
@@ -139,7 +148,14 @@ const CreateEvent: NextPage = () => {
             onChange={(e) => setEventName(e.target.value)}
           />
         </FormControl>
-
+        <FormControl id="eventDesc" mt={4}>
+          <FormLabel>Description</FormLabel>
+          <Input
+            type="text"
+            value={eventDesc}
+            onChange={(e) => setEventDesc(e.target.value)}
+          />
+        </FormControl>
         <FormControl id="eventLocation" mt={4}>
           <FormLabel>Event Location</FormLabel>
           <Input
@@ -182,11 +198,11 @@ const CreateEvent: NextPage = () => {
           </NumberInput>
         </FormControl>
         <FormControl id="ticketPrice" mt={4}>
-          <FormLabel>Price for a Ticket</FormLabel>
+          <FormLabel>Price for a Ticket in ETH</FormLabel>
           <NumberInput
             min={0}
             value={ticketPrice}
-            onChange={(value) => setTicketPrice(value)}
+            onChange={(value) => setTicketPrice(value.toString())}
           >
             <NumberInputField />
             <NumberInputStepper>
@@ -198,6 +214,7 @@ const CreateEvent: NextPage = () => {
 
         <Text textAlign="center">
           <Button
+            mt={8}
             colorScheme="teal"
             size="lg"
             // disabled={isLoading}
