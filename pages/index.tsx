@@ -34,7 +34,7 @@ const Events = () => {
     return (
       <Box textAlign="center" py={8}>
         <Box fontSize="xl" fontWeight="semibold" mb={2}>
-          You haven't created any events yet.
+          You have not created any events yet.
         </Box>
         <Box mb={4}>Get started by creating your first event.</Box>
         <Link href="/create-event">
